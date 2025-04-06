@@ -100,82 +100,55 @@
     </section>
 
     <!-- Projects Section -->
-    <section id="projects" class="py-16 px-4">
+    <section class="py-16 px-4">
         <div class="container mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                    <span class="gradient-text">My Projects</span>
-                </h2>
-                <p class="max-w-2xl mx-auto text-gray-400">Here are some of my recent projects. Each one was built with cutting-edge technologies.</p>
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4 text-indigo-400">My Projects</h2>
+                <p class="text-gray-400">Some cool stuff I've worked on lately.</p>
             </div>
-            
+
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <?php
-                // Connect to database and fetch projects
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "portfolio";
-                
-                try {
-                    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    
-                    $stmt = $conn->prepare("SELECT * FROM projects ORDER BY created_at DESC LIMIT 6");
-                    $stmt->execute();
-                    $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
-                    if (count($projects) === 0) {
-                        echo '<div class="col-span-3 text-center py-10">
-                                <i class="fas fa-folder-open text-4xl text-gray-400 mb-4"></i>
-                                <p class="text-gray-400">No projects found. Check back later!</p>
-                              </div>';
-                    } else {
-                        foreach ($projects as $project) {
-                            echo '<div class="cyber-card rounded-xl overflow-hidden scanlines">
-                                    <div class="h-48 bg-cover bg-center" style="background-image: url('.$project['image'].')"></div>
-                                    <div class="p-6">
-                                        <div class="flex justify-between items-start mb-3">
-                                            <span class="px-3 py-1 text-xs font-semibold text-indigo-400 bg-indigo-900/30 rounded-full">'.$project['category'].'</span>
-                                            <div class="flex space-x-2">
-                                                <a href="'.$project['github'].'" target="_blank" class="text-gray-400 hover:text-white transition" title="GitHub">
-                                                    <i class="fab fa-github"></i>
-                                                </a>
-                                                <a href="'.$project['link'].'" target="_blank" class="text-gray-400 hover:text-white transition" title="Live Demo">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <h3 class="text-xl font-bold mb-2 text-white">'.$project['title'].'</h3>
-                                        <p class="text-gray-400 mb-4">'.$project['description'].'</p>
-                                        <div class="flex flex-wrap gap-2 mt-4">';
-                            
-                            // Display technologies used
-                            $techs = explode(',', $project['technologies']);
-                            foreach ($techs as $tech) {
-                                echo '<span class="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded">'.trim($tech).'</span>';
-                            }
-                            
-                            echo '</div>
-                                    </div>
-                                </div>';
-                        }
-                    }
-                } catch(PDOException $e) {
-                    // Fallback if database connection fails
-                    echo '<div class="col-span-3 text-center py-10">
-                            <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
-                            <p class="text-gray-400">Unable to load projects. Please try again later.</p>
-                          </div>';
+                // Koneksi database
+                $conn = new PDO("mysql:host=localhost;dbname=portfolio", "root", "");
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                $stmt = $conn->query("SELECT * FROM projects ORDER BY created_at DESC LIMIT 6");
+                $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if (!$projects) {
+                    echo '<div class="col-span-3 text-center text-gray-400">No projects found.</div>';
                 }
+
+                foreach ($projects as $p) {
+                    echo '<div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">';
+                    echo '<div class="h-48 bg-cover bg-center" style="background-image: url(' . $p['image'] . ')"></div>';
+                    echo '<div class="p-6">';
+                    echo '<span class="inline-block px-3 py-1 text-sm bg-indigo-700 text-white rounded-full mb-2">' . $p['category'] . '</span>';
+                    echo '<h3 class="text-xl font-bold mb-2">' . $p['title'] . '</h3>';
+                    echo '<p class="text-gray-400 text-sm mb-4">' . $p['description'] . '</p>';
+                    
+                    $techs = explode(',', $p['technologies']);
+                    echo '<div class="flex flex-wrap gap-2 mb-4">';
+                    foreach ($techs as $tech) {
+                        echo '<span class="text-xs bg-gray-700 px-2 py-1 rounded">' . trim($tech) . '</span>';
+                    }
+                    echo '</div>';
+
+                    echo '<div class="flex gap-4">
+                            <a href="' . $p['github'] . '" target="_blank" title="GitHub" class="hover:text-indigo-300">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                            <a href="' . $p['link'] . '" target="_blank" title="Live Demo" class="hover:text-indigo-300">
+                                <i class="fas fa-external-link-alt text-xl"></i>
+                            </a>
+                          </div>';
+
+                    echo '</div></div>';
+                }
+
                 $conn = null;
                 ?>
-            </div>
-            
-            <div class="text-center mt-12">
-                <a href="projects.php" class="inline-flex items-center px-6 py-3 border border-indigo-500 text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition">
-                    View All Projects <i class="fas fa-arrow-right ml-2"></i>
-                </a>
             </div>
         </div>
     </section>
